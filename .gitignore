@@ -1,0 +1,5 @@
+data/
+helix_encoder/dataset
+helix_encoder/output
+helix_encoder/protein_result
+helix_encoder/sigbio_result
