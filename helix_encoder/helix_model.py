@@ -571,6 +571,7 @@ class Encoder(nn.Module):
         self.gn = nn.GroupNorm(8, hid_dim * 2)
         self.ln = nn.LayerNorm(hid_dim)
         self.fuuly = nn.Linear(hid_dim * 7, hid_dim)
+        self.position_fuuly = nn.Linear(7, 1)
 
     def forward(self, proteins):
         conv_inputs = []
@@ -653,8 +654,15 @@ class Encoder(nn.Module):
             conv_input7 = conved7
         conved7 = conved7.permute(0, 2, 1)
         conved_result.append(conved7)
+        
+        # 単純な線形層での圧縮
+        # concated = torch.cat(conved_result, dim=2)
+        # encoded = self.fuuly(concated)
 
-        concated = torch.cat(conved_result, dim=2)
-        encoded = self.fuuly(concated)
+        # positionwぽ考慮した圧縮
+        conved_result_4dim = [torch.unsqueeze(p, 3) for p in conved_result]
+        concated = torch.cat(conved_result_4dim, dim=3)
+        position_vec = self.fposition_fuuly(concated)
+        encoded = torch.squeeze(position_vec, 3)
 
         return encoded
