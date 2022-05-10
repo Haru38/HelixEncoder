@@ -10,8 +10,8 @@ import numpy as np
 import random
 import os
 import time
+#from model import *
 from helix_model import *
-#from helix_model import *
 import timeit
 import warnings
 warnings.simplefilter('ignore')
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     random.seed(SEED)
     torch.manual_seed(SEED)
     # torch.backends.cudnn.deterministic = True
-    DATASET = "classAByProteinWithHelix_train"
+    DATASET = "classA_position_reverse_train"
     print(DATASET)
     """CPU or GPU"""
     if torch.cuda.is_available():
@@ -102,8 +102,8 @@ if __name__ == "__main__":
     trainer = Trainer(model, lr, weight_decay, batch)
     tester = Tester(model)
     """Output files."""
-    file_AUCs = 'output/result/only_concat_byprotein1' + '.txt'
-    file_model = 'output/model/' + 'only_concat_byprotein1'
+    file_AUCs = 'output/result/classA_position_reverse' + '.txt'
+    file_model = 'output/model/' + 'classA_position_reverse'
     AUCs = ('Epoch\tTime(sec)\tLoss_train\tAUC_dev\tPRC_dev')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
