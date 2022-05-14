@@ -659,7 +659,8 @@ class Encoder(nn.Module):
         # concated = torch.cat(conved_result, dim=2)
         # encoded = self.fuuly(concated)
 
-        # positionwぽ考慮した圧縮
+        # positionwo
+        # 考慮した圧縮
         conved_result_4dim = [torch.unsqueeze(p, 3) for p in conved_result]
         concated = torch.cat(conved_result_4dim, dim=3)
         position_vec = self.position_fuuly(concated)

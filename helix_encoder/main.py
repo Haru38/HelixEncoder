@@ -11,7 +11,8 @@ import random
 import os
 import time
 #from model import *
-from helix_model import *
+from helix_encoder_position_cnn import *
+#from helix_model import *
 import timeit
 import warnings
 warnings.simplefilter('ignore')
@@ -102,8 +103,8 @@ if __name__ == "__main__":
     trainer = Trainer(model, lr, weight_decay, batch)
     tester = Tester(model)
     """Output files."""
-    file_AUCs = 'output/result/classA_position_reverse' + '.txt'
-    file_model = 'output/model/' + 'classA_position_reverse'
+    file_AUCs = 'output/result/classA_position_reverse_cnn' + '.txt'
+    file_model = 'output/model/' + 'classA_position_reverse_cnn'
     AUCs = ('Epoch\tTime(sec)\tLoss_train\tAUC_dev\tPRC_dev')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
