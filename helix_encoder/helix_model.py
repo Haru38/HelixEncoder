@@ -572,6 +572,7 @@ class Encoder(nn.Module):
         self.ln = nn.LayerNorm(hid_dim)
         self.fuuly = nn.Linear(hid_dim * 7, hid_dim)
         self.position_fuuly = nn.Linear(7, 1)
+        self.r = nn.ReLU()
 
     def forward(self, proteins):
         conv_inputs = []
@@ -599,6 +600,7 @@ class Encoder(nn.Module):
             conved1 = (conved1 + conv_input1) * self.scale
             conv_input1 = conved1
         conved1 = conved1.permute(0, 2, 1)
+        conved1 = self.ln(conved1)
         conved_result.append(conved1)
 
         #2
@@ -608,6 +610,7 @@ class Encoder(nn.Module):
             conved2 = (conved2 + conv_input2) * self.scale
             conv_input2 = conved2
         conved2 = conved2.permute(0, 2, 1)
+        conved2 = self.ln(conved2)
         conved_result.append(conved2)
 
         #3
@@ -617,6 +620,7 @@ class Encoder(nn.Module):
             conved3 = (conved3 + conv_input3) * self.scale
             conv_input3 = conved3
         conved3 = conved3.permute(0, 2, 1)
+        conved3 = self.ln(conved3)
         conved_result.append(conved3)
 
         #4
@@ -626,6 +630,7 @@ class Encoder(nn.Module):
             conved4 = (conved4 + conv_input4) * self.scale
             conv_input4 = conved4
         conved4 = conved4.permute(0, 2, 1)
+        conved4 = self.ln(conved4)
         conved_result.append(conved4)
 
         #5
@@ -635,6 +640,7 @@ class Encoder(nn.Module):
             conved5 = (conved5 + conv_input5) * self.scale
             conv_input5 = conved5
         conved5 = conved5.permute(0, 2, 1)
+        conved5 = self.ln(conved5)
         conved_result.append(conved5)
 
         #6
@@ -644,6 +650,7 @@ class Encoder(nn.Module):
             conved6 = (conved6 + conv_input6) * self.scale
             conv_input6 = conved6
         conved6 = conved6.permute(0, 2, 1)
+        conved6 = self.ln(conved6)
         conved_result.append(conved6)
 
         #7
@@ -653,17 +660,20 @@ class Encoder(nn.Module):
             conved7 = (conved7 + conv_input7) * self.scale
             conv_input7 = conved7
         conved7 = conved7.permute(0, 2, 1)
+        conved7 = self.ln(conved7)
         conved_result.append(conved7)
         
         # 単純な線形層での圧縮
         # concated = torch.cat(conved_result, dim=2)
         # encoded = self.fuuly(concated)
 
-        # positionwo
-        # 考慮した圧縮
+        # positionを考慮した圧縮
         conved_result_4dim = [torch.unsqueeze(p, 3) for p in conved_result]
         concated = torch.cat(conved_result_4dim, dim=3)
         position_vec = self.position_fuuly(concated)
         encoded = torch.squeeze(position_vec, 3)
+        encoded = self.r(encoded)
+        encoded = self.dropout(encoded)
+
 
         return encoded
