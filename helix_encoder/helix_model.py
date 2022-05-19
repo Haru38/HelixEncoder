@@ -449,46 +449,47 @@ def pack(atoms, adjs, proteins, labels, device):
 #         self.device = device
 #         #self.pos_embedding = nn.Embedding(1000, hid_dim)
 #         self.scale = torch.sqrt(torch.FloatTensor([0.5])).to(device)
-#         self.multi_convs = [
-#             nn.ModuleList([
-#                 nn.Conv1d(hid_dim,
-#                           2 * hid_dim,
-#                           kernel_size,
-#                           padding=(kernel_size - 1) // 2)
-#                 for _ in range(self.n_layers)
-#             ]) for _ in range(7)
-#         ]
-
+#         self.convs = nn.ModuleList([
+#             nn.Conv1d(hid_dim,
+#                       2 * hid_dim,
+#                       kernel_size,
+#                       padding=(kernel_size - 1) // 2)
+#             for _ in range(self.n_layers)
+#         ])  # convolutional layers
 #         self.dropout = nn.Dropout(dropout)
-#         self.fc = [nn.Linear(self.input_dim, self.hid_dim) for _ in range(7)]
+#         self.fc = nn.Linear(self.input_dim, self.hid_dim)
 #         self.gn = nn.GroupNorm(8, hid_dim * 2)
 #         self.ln = nn.LayerNorm(hid_dim)
-#         self.fuuly = nn.Linear(hid_dim * 7, hid_dim)
 
-#     def forward(self, proteins):
-#         conv_inputs = []
-#         for index, protein in enumerate(proteins):
-#             conv_input = self.fc[index](protein)
-#             conv_input = conv_input.permute(0, 2, 1)
-#             conv_inputs.append(conv_input)
+#     def forward(self, protein):
+#         #pos = torch.arange(0, protein.shape[1]).unsqueeze(0).repeat(protein.shape[0], 1).to(self.device)
+#         #protein = protein + self.pos_embedding(pos)
+#         #protein = [batch size, protein len,protein_dim]
+#         conv_input = self.fc(protein)
+#         # conv_input=[batch size,protein len,hid dim]
+#         #permute for convolutional layer
+#         conv_input = conv_input.permute(0, 2, 1)
 #         #conv_input = [batch size, hid dim, protein len]
-#         conved_result = []
-#         for pi in range(7):
-#             conv_input = conv_inputs[pi]
-#             convs = self.multi_convs[pi]
-#             for i, conv in enumerate(convs):
-#                 conved = conv(self.dropout(conv_input))
-#                 conved = F.glu(conved, dim=1)
-#                 conved = (conved + conv_input) * self.scale
-#                 conv_input = conved
-#             conved = conved.permute(0, 2, 1)
-#             # conved = [batch size,protein len,hid dim]
-#             conved = self.ln(conved)
-#             conved_result.append(conved)
-#         concated = torch.cat(conved_result, dim=2)
-#         encoded = self.fuuly(concated)
+#         for i, conv in enumerate(self.convs):
+#             #pass through convolutional layer
+#             conved = conv(self.dropout(conv_input))
+#             #conved = [batch size, 2*hid dim, protein len]
 
-#         return encoded
+#             #pass through GLU activation function
+#             conved = F.glu(conved, dim=1)
+#             #conved = [batch size, hid dim, protein len]
+
+#             #apply residual connection / high way
+#             conved = (conved + conv_input) * self.scale
+#             #conved = [batch size, hid dim, protein len]
+
+#             #set conv_input to conved for next loop iteration
+#             conv_input = conved
+
+#         conved = conved.permute(0, 2, 1)
+#         # conved = [batch size,protein len,hid dim]
+#         conved = self.ln(conved)
+#         return conved
 
 
 class Encoder(nn.Module):
