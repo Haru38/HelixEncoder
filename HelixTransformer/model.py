@@ -76,7 +76,7 @@ class SelfAttention(nn.Module):
 
         # x = [batch size, sent len_Q, hid dim]
 
-        return x
+        return x,attention
 
 
 class PositionwiseFeedforward(nn.Module):
@@ -130,13 +130,18 @@ class DecoderLayer(nn.Module):
         # trg_mask = [batch size, compound sent len]
         # src_mask = [batch size, protein len]
 
-        trg = self.ln(trg + self.do(self.sa(trg, trg, trg, trg_mask)))
+        trg_1 = trg
+        trg,k = self.sa(trg, trg, trg, trg_mask)
+        trg = self.ln(trg_1 + self.do(trg))
+        
+        trg_2 = trg
+        trg, attention = self.ea(trg, src, src, src_mask)
+        trg = self.ln(trg_2 + self.do(trg))
+        
+        trg_3 = trg
+        trg = self.ln(trg_3 + self.do(self.pf(trg)))
 
-        trg = self.ln(trg + self.do(self.ea(trg, src, src, src_mask)))
-
-        trg = self.ln(trg + self.do(self.pf(trg)))
-
-        return trg
+        return trg,attention
 
 class Trainer(object):
     def __init__(self, model, lr, weight_decay, batch):
@@ -427,10 +432,10 @@ class Predictor(nn.Module):
         enc_src = self.encoder(protein)
         # enc_src = [batch size, protein len, hid dim]
 
-        out = self.decoder(compound, enc_src, compound_mask, protein_mask)
+        out,attention = self.decoder(compound, enc_src, compound_mask, protein_mask)
         # out = [batch size,hid_dim]
 
-        return out
+        return out,attention
 
 class Predictors(nn.Module):
     def __init__(self, predictors, atom_dim=34):
@@ -445,6 +450,7 @@ class Predictors(nn.Module):
         self.predictors7 = predictors[6]
         self.fc_1 = nn.Linear(64*7, 64)
         self.fc_1 = nn.Linear(64, 2)
+        self.do_1 = nn.Dropout(0.2)
 
 
         self.weight = nn.Parameter(torch.FloatTensor(atom_dim, atom_dim))
@@ -470,25 +476,68 @@ class Predictors(nn.Module):
 
         #calc attention
         transformer_output = []
-        ht1 = self.predictors1(compound,proteins[0],atom_num, protein_num)
+        attentions = []
+
+        ht1,attention1 = self.predictors1(compound,proteins[0],atom_num, protein_num)
         transformer_output.append(ht1)
-        ht2 = self.predictors2(compound,proteins[1],atom_num, protein_num)
+        attentions.append(attention1)
+
+        ht2,attention2 = self.predictors2(compound,proteins[1],atom_num, protein_num)
         transformer_output.append(ht2)
-        ht3 = self.predictors3(compound,proteins[2],atom_num, protein_num)
+        attentions.append(attention2)
+
+        ht3,attention3 = self.predictors3(compound,proteins[2],atom_num, protein_num)
         transformer_output.append(ht3)
-        ht4 = self.predictors4(compound,proteins[3],atom_num, protein_num)
+        attentions.append(attention3)
+
+        ht4,attention4 = self.predictors4(compound,proteins[3],atom_num, protein_num)
         transformer_output.append(ht4)
-        ht5 = self.predictors5(compound,proteins[4],atom_num, protein_num)
+        attentions.append(attention4)
+
+        ht5,attention5 = self.predictors5(compound,proteins[4],atom_num, protein_num)
         transformer_output.append(ht5)
-        ht6 = self.predictors6(compound,proteins[5],atom_num, protein_num)
+        attentions.append(attention5)
+
+        ht6,attention6 = self.predictors6(compound,proteins[5],atom_num, protein_num)
         transformer_output.append(ht6)
-        ht7 = self.predictors7(compound,proteins[6],atom_num, protein_num)
+        attentions.append(attention6)
+
+        ht7,attention7 = self.predictors7(compound,proteins[6],atom_num, protein_num)
         transformer_output.append(ht7)
+        attentions.append(attention7)
 
         concated =  torch.cat(transformer_output,dim = 1)
-        label = F.relu(self.fc_1(concated ))
+        label =  self.do_1(F.relu(self.fc_1(concated)))
         label = self.fc_2(label)
-        return label
+        return label,attentions
+    
+    def __call__(self, data, train=True):
+        compound, adj, protein, correct_interaction, atom_num, protein_num = data
+        # compound = compound.to(self.device)
+        # adj = adj.to(self.device)
+        # protein = protein.to(self.device)
+        # correct_interaction = correct_interaction.to(self.device)
+        Loss = nn.CrossEntropyLoss()
+
+        if train:
+            predicted_interaction,attentions = self.forward(compound, adj, protein,
+                                                 atom_num, protein_num)
+            loss = Loss(predicted_interaction, correct_interaction)
+            return loss
+        
+        else:
+            #compound = compound.unsqueeze(0)
+            #adj = adj.unsqueeze(0)
+            #protein = protein.unsqueeze(0)
+            #correct_interaction = correct_interaction.unsqueeze(0)
+            predicted_interaction,attentions = self.forward(compound, adj, protein,
+                                                 atom_num, protein_num)
+            correct_labels = correct_interaction.to('cpu').data.numpy()
+            ys = F.softmax(predicted_interaction, 1).to('cpu').data.numpy()
+            predicted_labels = np.argmax(ys, axis=1)
+            predicted_scores = ys[:, 1]
+            return correct_labels, predicted_labels, predicted_scores
+
 
 
 
