@@ -363,8 +363,6 @@ class Decoder(nn.Module):
         ])
         self.ft = nn.Linear(atom_dim, hid_dim)
         self.do = nn.Dropout(dropout)
-        self.fc_1 = nn.Linear(hid_dim, 256)
-        self.fc_2 = nn.Linear(256, 2)
         self.gn = nn.GroupNorm(8, 256)
 
     def forward(self, trg, src, trg_mask=None, src_mask=None):
@@ -399,10 +397,58 @@ class Decoder(nn.Module):
 ####################################################################
 
 class Predictor(nn.Module):
-    def __init__(self, encoders, decoder, device, atom_dim=34):
-        #encoders = [encoder1,encoder2,...,encoder7]
-        
-        return
+    def __init__(self, encoder, decoder, device, atom_dim=34):
+        super().__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.device = device
+
+    def make_masks(self, atom_num, protein_num, compound_max_len,
+                   protein_max_len):
+        N = len(atom_num)  # batch size
+        compound_mask = torch.zeros((N, compound_max_len))
+        protein_mask = torch.zeros((N, protein_max_len))
+        for i in range(N):
+            compound_mask[i, :atom_num[i]] = 1
+            protein_mask[i, :protein_num[i]] = 1
+        compound_mask = compound_mask.unsqueeze(1).unsqueeze(3).to(self.device)
+        protein_mask = protein_mask.unsqueeze(1).unsqueeze(2).to(self.device)
+        return compound_mask, protein_mask
+
+    def forward(self, compound, protein, atom_num, protein_num):
+        # compound = [batch,atom_num, atom_dim]
+        # adj = [batch,atom_num, atom_num]
+        # protein = [batch,protein len, 100]
+        compound_max_len = compound.shape[1]
+        protein_max_len = protein.shape[1]
+        compound_mask, protein_mask = self.make_masks(atom_num, protein_num,
+                                                      compound_max_len,
+                                                      protein_max_len)
+        enc_src = self.encoder(protein)
+        # enc_src = [batch size, protein len, hid dim]
+
+        out = self.decoder(compound, enc_src, compound_mask, protein_mask)
+        # out = [batch size,hid_dim]
+
+        return out
+
+class Predictors(nn.Module):
+    def __init__(self, predictors, atom_dim=34):
+        super().__init__()
+
+        self.predictors1 = predictors[0]
+        self.predictors2 = predictors[1]
+        self.predictors3 = predictors[2]
+        self.predictors4 = predictors[3]
+        self.predictors5 = predictors[4]
+        self.predictors6 = predictors[5]
+        self.predictors7 = predictors[6]
+        self.fc_1 = nn.Linear(64*7, 64)
+        self.fc_1 = nn.Linear(64, 2)
+
+
+        self.weight = nn.Parameter(torch.FloatTensor(atom_dim, atom_dim))
+        self.init_weight()
 
     def init_weight(self):
         stdv = 1. / math.sqrt(self.weight.size(1))
@@ -416,18 +462,34 @@ class Predictor(nn.Module):
         output = torch.bmm(adj, support)
         # output = [batch,num_node,atom_dim]
         return output
+        
+    def forward(self, compound, adj, proteins, atom_num, protein_num):
 
-    def make_masks(self, atom_num, protein_num, compound_max_len,
-                   protein_max_len):
-        N = len(atom_num)  # batch size
-        compound_mask = torch.zeros((N, compound_max_len))
-        protein_mask = torch.zeros((N, protein_max_len))
-        for i in range(N):
-            compound_mask[i, :atom_num[i]] = 1
-            protein_mask[i, :protein_num[i]] = 1
-        compound_mask = compound_mask.unsqueeze(1).unsqueeze(3).to(self.device)
-        protein_mask = protein_mask.unsqueeze(1).unsqueeze(2).to(self.device)
-        return compound_mask, protein_mask
-    
-    def forward():
+        #compound emmbedding
+        compound = self.gcn(compound, adj)
+
+        #calc attention
+        transformer_output = []
+        ht1 = self.predictors1(compound,proteins[0],atom_num, protein_num)
+        transformer_output.append(ht1)
+        ht2 = self.predictors2(compound,proteins[1],atom_num, protein_num)
+        transformer_output.append(ht2)
+        ht3 = self.predictors3(compound,proteins[2],atom_num, protein_num)
+        transformer_output.append(ht3)
+        ht4 = self.predictors4(compound,proteins[3],atom_num, protein_num)
+        transformer_output.append(ht4)
+        ht5 = self.predictors5(compound,proteins[4],atom_num, protein_num)
+        transformer_output.append(ht5)
+        ht6 = self.predictors6(compound,proteins[5],atom_num, protein_num)
+        transformer_output.append(ht6)
+        ht7 = self.predictors7(compound,proteins[6],atom_num, protein_num)
+        transformer_output.append(ht7)
+
+        concated =  torch.cat(transformer_output,dim = 1)
+        label = F.relu(self.fc_1(concated ))
+        label = self.fc_2(label)
+        return label
+
+
+
 
