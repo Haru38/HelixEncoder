@@ -51,7 +51,7 @@ if __name__ == "__main__":
     random.seed(SEED)
     torch.manual_seed(SEED)
     # torch.backends.cudnn.deterministic = True
-    DATASET = "classAByProteinWithHelix_train"
+    DATASET = "classA_bp_train"
     print(DATASET)
     """CPU or GPU"""
     if torch.cuda.is_available():

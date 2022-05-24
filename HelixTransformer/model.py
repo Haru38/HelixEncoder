@@ -31,6 +31,7 @@ class SelfAttention(nn.Module):
                                                    ])).to(device)
 
     def forward(self, query, key, value, mask=None):
+
         bsz = query.shape[0]
 
         # query = key = value [batch size, sent len, hid dim]
@@ -142,6 +143,62 @@ class DecoderLayer(nn.Module):
         trg = self.ln(trg_3 + self.do(self.pf(trg)))
 
         return trg,attention
+
+class Decoder(nn.Module):
+    """ compound feature extraction."""
+    def __init__(self, atom_dim, hid_dim, n_layers, n_heads, pf_dim,
+                 decoder_layer, self_attention, positionwise_feedforward,
+                 dropout, device):
+        super().__init__()
+        self.ln = nn.LayerNorm(hid_dim)
+        self.output_dim = atom_dim
+        self.hid_dim = hid_dim
+        self.n_layers = n_layers
+        self.n_heads = n_heads
+        self.pf_dim = pf_dim
+        self.decoder_layer = decoder_layer
+        self.self_attention = self_attention
+        self.positionwise_feedforward = positionwise_feedforward
+        self.dropout = dropout
+        self.device = device
+        self.sa = self_attention(hid_dim, n_heads, dropout, device)
+        self.layers = nn.ModuleList([
+            decoder_layer(hid_dim, n_heads, pf_dim, self_attention,
+                          positionwise_feedforward, dropout, device)
+            for _ in range(n_layers)
+        ])
+        self.ft = nn.Linear(atom_dim, hid_dim)
+        self.do = nn.Dropout(dropout)
+        self.gn = nn.GroupNorm(8, 256)
+
+    def forward(self, trg, src, trg_mask=None, src_mask=None):
+        # trg = [batch_size, compound len, atom_dim]
+        # src = [batch_size, protein len, hid_dim] # encoder output
+        trg = self.ft(trg)
+
+        # trg = [batch size, compound len, hid dim]
+        for layer in self.layers:
+            trg,attention = layer(trg, src, trg_mask, src_mask)
+
+        # trg = [batch size, compound len, hid dim]
+        """Use norm to determine which atom is significant. """
+        norm = torch.norm(trg, dim=2)
+        # norm = [batch size,compound len]
+        norm = F.softmax(norm, dim=1)
+        # norm = [batch size,compound len]
+        # trg = torch.squeeze(trg,dim=0)
+        # norm = torch.squeeze(norm,dim=0)
+        sum = torch.zeros((trg.shape[0], self.hid_dim)).to(self.device)
+        for i in range(norm.shape[0]):
+            for j in range(norm.shape[1]):
+                v = trg[i, j, ]
+                v = v * norm[i, j]
+                sum[i, ] += v
+        # sum = [batch size,hid_dim]
+        # label = F.relu(self.fc_1(sum))
+        # label = self.fc_2(label)
+        return sum,attention
+
 
 class Trainer(object):
     def __init__(self, model, lr, weight_decay, batch):
@@ -343,61 +400,6 @@ class Encoder(nn.Module):
         conved = self.ln(conved)
         return conved
 
-class Decoder(nn.Module):
-    """ compound feature extraction."""
-    def __init__(self, atom_dim, hid_dim, n_layers, n_heads, pf_dim,
-                 decoder_layer, self_attention, positionwise_feedforward,
-                 dropout, device):
-        super().__init__()
-        self.ln = nn.LayerNorm(hid_dim)
-        self.output_dim = atom_dim
-        self.hid_dim = hid_dim
-        self.n_layers = n_layers
-        self.n_heads = n_heads
-        self.pf_dim = pf_dim
-        self.decoder_layer = decoder_layer
-        self.self_attention = self_attention
-        self.positionwise_feedforward = positionwise_feedforward
-        self.dropout = dropout
-        self.device = device
-        self.sa = self_attention(hid_dim, n_heads, dropout, device)
-        self.layers = nn.ModuleList([
-            decoder_layer(hid_dim, n_heads, pf_dim, self_attention,
-                          positionwise_feedforward, dropout, device)
-            for _ in range(n_layers)
-        ])
-        self.ft = nn.Linear(atom_dim, hid_dim)
-        self.do = nn.Dropout(dropout)
-        self.gn = nn.GroupNorm(8, 256)
-
-    def forward(self, trg, src, trg_mask=None, src_mask=None):
-        # trg = [batch_size, compound len, atom_dim]
-        # src = [batch_size, protein len, hid_dim] # encoder output
-        trg = self.ft(trg)
-
-        # trg = [batch size, compound len, hid dim]
-
-        for layer in self.layers:
-            trg = layer(trg, src, trg_mask, src_mask)
-
-        # trg = [batch size, compound len, hid dim]
-        """Use norm to determine which atom is significant. """
-        norm = torch.norm(trg, dim=2)
-        # norm = [batch size,compound len]
-        norm = F.softmax(norm, dim=1)
-        # norm = [batch size,compound len]
-        # trg = torch.squeeze(trg,dim=0)
-        # norm = torch.squeeze(norm,dim=0)
-        sum = torch.zeros((trg.shape[0], self.hid_dim)).to(self.device)
-        for i in range(norm.shape[0]):
-            for j in range(norm.shape[1]):
-                v = trg[i, j, ]
-                v = v * norm[i, j]
-                sum[i, ] += v
-        # sum = [batch size,hid_dim]
-        # label = F.relu(self.fc_1(sum))
-        # label = self.fc_2(label)
-        return sum
 
 ####################################################################
 
@@ -431,6 +433,8 @@ class Predictor(nn.Module):
                                                       protein_max_len)
         enc_src = self.encoder(protein)
         # enc_src = [batch size, protein len, hid dim]
+        # print(enc_src.shape)
+        # print(compound)
 
         out,attention = self.decoder(compound, enc_src, compound_mask, protein_mask)
         # out = [batch size,hid_dim]

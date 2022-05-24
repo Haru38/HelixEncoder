@@ -83,7 +83,7 @@ if __name__ == "__main__":
     from gensim.models import Word2Vec
     import os
 
-    DATASET = "classA_position_reverse_test"
+    DATASET = "classA_bp_test"
     output = DATASET + "_2"
     with open(
             "/home/yamane/helixEncoder/data/classAByProteinWithHelix/byProteinWithHelix_test.txt",
