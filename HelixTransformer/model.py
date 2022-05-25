@@ -442,7 +442,7 @@ class Predictor(nn.Module):
         return out,attention
 
 class Predictors(nn.Module):
-    def __init__(self, predictors, atom_dim=34):
+    def __init__(self, predictors, device,atom_dim=34):
         super().__init__()
 
         self.predictors1 = predictors[0]
@@ -453,12 +453,14 @@ class Predictors(nn.Module):
         self.predictors6 = predictors[5]
         self.predictors7 = predictors[6]
         self.fc_1 = nn.Linear(64*7, 64)
-        self.fc_1 = nn.Linear(64, 2)
+        self.fc_2 = nn.Linear(64, 2)
         self.do_1 = nn.Dropout(0.2)
 
 
         self.weight = nn.Parameter(torch.FloatTensor(atom_dim, atom_dim))
         self.init_weight()
+
+        self.device = device
 
     def init_weight(self):
         stdv = 1. / math.sqrt(self.weight.size(1))
@@ -511,6 +513,8 @@ class Predictors(nn.Module):
         attentions.append(attention7)
 
         concated =  torch.cat(transformer_output,dim = 1)
+        # print(ht1.shape)
+        # print(concated.shape)
         label =  self.do_1(F.relu(self.fc_1(concated)))
         label = self.fc_2(label)
         return label,attentions

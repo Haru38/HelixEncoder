@@ -97,7 +97,7 @@ if __name__ == "__main__":
                       dropout, device) for _ in range(7)]
 
     predictor_list = [Predictor(e, d, device) for e,d in zip(encoders,decoders)]
-    model = Predictors(predictor_list)
+    model = Predictors(predictor_list,device)
 
     print(model)
     model.to(device)
