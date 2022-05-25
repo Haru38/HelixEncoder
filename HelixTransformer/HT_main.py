@@ -98,9 +98,9 @@ if __name__ == "__main__":
 
     predictor_list = [Predictor(e, d, device) for e,d in zip(encoders,decoders)]
     model = Predictors(predictor_list,device)
-
-    print(model)
+    #model = nn.DataParallel(model,device_ids=list(range(torch.cuda.device_count())))
     model.to(device)
+    print(model)
     trainer = Trainer(model, lr, weight_decay, batch)
     tester = Tester(model)
     """Output files."""
