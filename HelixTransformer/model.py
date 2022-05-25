@@ -10,6 +10,7 @@ from lookahead import Lookahead
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
+
 class SelfAttention(nn.Module):
     def __init__(self, hid_dim, n_heads, dropout, device):
         super().__init__()
