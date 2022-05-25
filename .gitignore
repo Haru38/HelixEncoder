@@ -2,3 +2,13 @@ data/
 helix_encoder/output
 helix_encoder/protein_result
 helix_encoder/sigbio_result
+helix_encoder/dataset/byProteinWithHelix_concat_train
+helix_encoder/dataset/GPCRclassA_ByProtein_test/
+helix_encoder/dataset/GPCRclassA_test/
+helix_encoder/dataset/byProteinWithHelix_concat_test.txt/
+helix_encoder/dataset/classAByProteinWithHelix_test/
+helix_encoder/dataset/classA_position_reverse_test/
+helix_encoder/dataset/GPCRclassA_ByProtein_train/
+helix_encoder/dataset/GPCRclassA_train/
+helix_encoder/dataset/classAByProteinWithHelix_train/
+helix_encoder/dataset/classA_position_reverse_train/
