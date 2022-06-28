@@ -52,7 +52,7 @@ if __name__ == "__main__":
     random.seed(SEED)
     torch.manual_seed(SEED)
     # torch.backends.cudnn.deterministic = True
-    DATASET = "classA_position_reverse_train"
+    DATASET = "classA_bp_train"
     print(DATASET)
     """CPU or GPU"""
     if torch.cuda.is_available():
@@ -97,13 +97,13 @@ if __name__ == "__main__":
                       dropout, device)
     model = Predictor(encoder, decoder, device)
     # model.load_state_dict(torch.load("output/model/lr=0.001,dropout=0.1,lr_decay=0.5"))
-    print(model)
     model.to(device)
+    #model = nn.DataParallel(model,device_ids=list(range(torch.cuda.device_count())))
     trainer = Trainer(model, lr, weight_decay, batch)
     tester = Tester(model)
     """Output files."""
-    file_AUCs = 'output/result/classA_position_reverse_layerNorm' + '.txt'
-    file_model = 'output/model/' + 'classA_position_reverse_layerNorm'
+    file_AUCs = 'output/result/20220628_dataset10_helixencoder' + '.txt'
+    file_model = 'output/model/' + '20220628_dataset10_helixencoder'
     AUCs = ('Epoch\tTime(sec)\tLoss_train\tAUC_dev\tPRC_dev')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
@@ -129,4 +129,6 @@ if __name__ == "__main__":
         if AUC_dev > max_AUC_dev:
             tester.save_model(model, file_model)
             max_AUC_dev = AUC_dev
-        print('\t'.join(map(str, AUCs)))
+            print('\t'.join(map(str, AUCs)))
+        else:
+            print('\t'.join(map(str, AUCs)))

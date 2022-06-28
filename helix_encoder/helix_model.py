@@ -665,16 +665,18 @@ class Encoder(nn.Module):
         conved_result.append(conved7)
         
         # 単純な線形層での圧縮
-        # concated = torch.cat(conved_result, dim=2)
-        # encoded = self.fuuly(concated)
-
-        # positionを考慮した圧縮
-        conved_result_4dim = [torch.unsqueeze(p, 3) for p in conved_result]
-        concated = torch.cat(conved_result_4dim, dim=3)
-        position_vec = self.position_fuuly(concated)
-        encoded = torch.squeeze(position_vec, 3)
+        concated = torch.cat(conved_result, dim=2)
+        encoded = self.fuuly(concated)
         encoded = self.r(encoded)
         encoded = self.dropout(encoded)
+
+        # positionを考慮した圧縮
+        # conved_result_4dim = [torch.unsqueeze(p, 3) for p in conved_result]
+        # concated = torch.cat(conved_result_4dim, dim=3)
+        # position_vec = self.position_fuuly(concated)
+        # encoded = torch.squeeze(position_vec, 3)
+        # encoded = self.r(encoded)
+        # encoded = self.dropout(encoded)
 
 
         return encoded
