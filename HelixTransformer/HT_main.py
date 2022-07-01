@@ -98,14 +98,16 @@ if __name__ == "__main__":
 
     predictor_list = [Predictor(e, d, device) for e,d in zip(encoders,decoders)]
     model = Predictors(predictor_list,device)
-    #model = nn.DataParallel(model,device_ids=list(range(torch.cuda.device_count())))
+    #model.load_state_dict(torch.load("output/model/HelixTransformer_classA"))
+    #print("model loaded")
     model.to(device)
-    print(model)
+    model = nn.DataParallel(model,device_ids=list(range(torch.cuda.device_count())))
+    #print(model)
     trainer = Trainer(model, lr, weight_decay, batch)
     tester = Tester(model)
     """Output files."""
-    file_AUCs = 'output/result/HelixTransformer_classA' + '.txt'
-    file_model = 'output/model/' + 'HelixTransformer_classA'
+    file_AUCs = 'output/result/HelixTransformer_classA_4' + '.txt'
+    file_model = 'output/model/' + 'HelixTransformer_classA_2'
     AUCs = ('Epoch\tTime(sec)\tLoss_train\tAUC_dev\tPRC_dev')
     with open(file_AUCs, 'w') as f:
         f.write(AUCs + '\n')
