@@ -11,12 +11,13 @@
 - Gensim >=3.4.0
 
 ## Setup
-
+- Clone [TransformerCPI](https://github.com/lifanchen-simm/transformerCPI)
+- Place each file in this repository in the TransformerCPI directory
 ## Data
 - `/csvData`
-
+  - csv files of protein sequences, compound SMILES, and interaction data used in the experiments
 - `/data`
-  - 
+  - Text data as input for mol_featurizer
 ## Using
 - `mol_featurizer_for_helix.py`: generate input for Helix encoder
 - `helix_encoder_main.py`: trains Helix encoder model
