@@ -3,8 +3,10 @@
 @Time:Created on 2019/9/17 8:54
 @author: LiFan Chen
 @Software: PyCharm
+
+@Time:Modified on 2023/3/
 @File modifier: Haruki Yamane
-@Filename: main.py
+@Filename: helix_encoder_main.py
 """
 import torch
 import numpy as np

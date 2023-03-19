@@ -3,6 +3,8 @@
 @Time:Created on 2021/11/
 @author: LiFan Chen
 @Software: PyCharm
+
+@Time:Modified on 2023/3/
 @File modifier: Haruki Yamane
 @Filename: mol_featurizer_forHelix.py
 """
