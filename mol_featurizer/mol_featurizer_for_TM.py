@@ -86,9 +86,9 @@ if __name__ == "__main__":
     from gensim.models import Word2Vec
     import os
 
-    DATASET = "OR_baseLine_ecl2/newtest_4"
+    DATASET = "test_ECL2"
     with open(
-            "../../data/OR_bL_ecl2/newtest_4.txt",
+            "../data/data_split_TM_ECL/test_ECL2_0.txt",
             "r") as f:
         data_list = f.read().strip().split('\n')
     not_list_test = []
@@ -108,11 +108,11 @@ if __name__ == "__main__":
         split_data = data.strip().split(" ")
         smiles = split_data[0]
         #for TM
-        sequences = split_data[1:8]
-        interaction = split_data[8]
+        # sequences = split_data[1:8]
+        # interaction = split_data[8]
         #for TM + ECL
-        # sequences = split_data[1:9]
-        # interaction = split_data[9]
+        sequences = split_data[1:9]
+        interaction = split_data[9]
 
         atom_feature, adj = mol_features(smiles)
         compounds.append(atom_feature)

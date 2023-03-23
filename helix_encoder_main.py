@@ -52,8 +52,8 @@ if __name__ == "__main__":
     SEED = 1
     random.seed(SEED)
     torch.manual_seed(SEED)
-    paternNum = 4
-    DATASET ="classA_shuffle_helix/train_"+str(paternNum)
+    paternNum = 0
+    DATASET = "train_ECL2_"+str(paternNum)
     print(DATASET)
     """CPU or GPU"""
     if torch.cuda.is_available():
@@ -74,6 +74,7 @@ if __name__ == "__main__":
     dataset = shuffle_dataset(dataset, 1234)
     dataset_train, dataset_dev = split_dataset(dataset, 0.8)
     print(len(dataset_train))
+
     """ create model ,trainer and tester """
     protein_dim = 100
     atom_dim = 34
