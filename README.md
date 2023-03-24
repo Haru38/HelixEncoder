@@ -18,9 +18,27 @@
   - csv files of protein sequences, compound SMILES, and interaction data used in the experiments
 - `/data`
   - Text data as input for mol_featurizer
-## Using
+  - data format
+    - A text file containing compound SMILES, protein sequences, and interactions (0 or 1) in this order, separated by spaces. Protein sequences of each transmembrane region and extracellular loop region are also separated by spaces.
+```
+O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVLL WFLREGLLFTALAASTFSLLF VYGFIGLCWLLAALLGMLPLL FCLVIFAGVLATIMGLYGAIF VLMILLAFLVCWGPLFGLLLA MDWILALAVLNSAVNPIIYSF 1
+```
+- dataset
+  - Directory where data embedded by mol_featurizer is stored
+  
+## HOw to use
+### embedding
 - `mol_featurizer_for_helix.py`: generate input for Helix encoder
+
+### train
 - `helix_encoder_main.py`: trains Helix encoder model
+
+### predict
+- A trained model, Helix encoder (TM + ECL2), exists in this repository (/output/model/helixEncoder_TM_ECL2). If you want to use this model to predict your own data, use the following.
+
+1. Place the data you want to predict in /data/.
+2. At mol_featurizer_for_TM, place the embedding vector in /dataset/.
+3. For prediction, run python predict.py
 
 ## Author
 
