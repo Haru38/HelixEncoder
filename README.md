@@ -13,6 +13,7 @@
 ## Setup
 - Clone [TransformerCPI](https://github.com/lifanchen-simm/transformerCPI)
 - Place each file in this repository in the TransformerCPI directory
+
 ## Data
 - `/csvData`
   - csv files of protein sequences, compound SMILES, and interaction data used in the experiments
@@ -23,22 +24,24 @@
 ```
 O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVLL WFLREGLLFTALAASTFSLLF VYGFIGLCWLLAALLGMLPLL FCLVIFAGVLATIMGLYGAIF VLMILLAFLVCWGPLFGLLLA MDWILALAVLNSAVNPIIYSF 1
 ```
-- dataset
+- `/dataset`
   - Directory where data embedded by mol_featurizer is stored
   
 ## HOw to use
 ### embedding
-- `mol_featurizer_for_helix.py`: generate input for Helix encoder
+- Generate input for Helix encoder. 
+  -  `python mol_featurizer_for_TM.py`  
 
-### train
-- `helix_encoder_main.py`: trains Helix encoder model
+### model training
+- Trains Helix encoder model.
+  - `pytohn helix_encoder_main.py`    
 
 ### predict
-- A trained model, Helix encoder (TM + ECL2), exists in this repository (/output/model/helixEncoder_TM_ECL2). If you want to use this model to predict your own data, use the following.
+- A trained model, Helix encoder (TM + ECL2), exists in this repository (`/output/model/helixEncoder_TM_ECL2`). If you want to use this model to predict your own data, use the following.
 
 1. Place the data you want to predict in /data/.
 2. At mol_featurizer_for_TM, place the embedding vector in /dataset/.
-3. For prediction, run python predict.py
+3. For prediction, run `python predict.py`
 
 ## Author
 
