@@ -48,8 +48,6 @@ O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVL
 3. For prediction, run `python predict.py`
 
 ## Reference
-Lifan Chen, Xiaoqin Tan, Dingyan Wang, Feisheng Zhong, Xiaohong Liu, Tianbiao Yang, Xiaomin Luo, Kaixian Chen, Hualiang Jiang, Mingyue Zheng, TransformerCPI: improving compound–protein interaction prediction by sequence-based deep learning with self-attention mechanism and label reversal experiments, Bioinformatics, Volume 36, Issue 16, 15 August 2020, Pages 4406–4414, https://doi.org/10.1093/bioinformatics/btaa524
+1. Lifan Chen, Xiaoqin Tan, Dingyan Wang, Feisheng Zhong, Xiaohong Liu, Tianbiao Yang, Xiaomin Luo, Kaixian Chen, Hualiang Jiang, Mingyue Zheng, TransformerCPI: improving compound–protein interaction prediction by sequence-based deep learning with self-attention mechanism and label reversal experiments, Bioinformatics, Volume 36, Issue 16, 15 August 2020, Pages 4406–4414, https://doi.org/10.1093/bioinformatics/btaa524
 
-## Author
 
-## Citation
