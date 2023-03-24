@@ -1,5 +1,6 @@
 # Helix encoder: A compound-protein interaction prediction model specifically designed for Class A GPCRs
 
+{: align="center"}
 ![fotAbstract (1)](https://user-images.githubusercontent.com/67744833/226157282-646a1e6e-77b9-462c-b2c1-2bcae33ed700.png)
 
 ## Dependencies
