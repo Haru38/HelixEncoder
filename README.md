@@ -27,7 +27,7 @@ O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVL
 - `/dataset`
   - Directory where data embedded by mol_featurizer is stored
   
-## HOw to use
+## How to use
 ### embedding
 - Generate input for Helix encoder. 
   -  `python mol_featurizer_for_TM.py`  
