@@ -32,15 +32,15 @@ O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVL
   - Directory where data embedded by mol_featurizer is stored
   
 ## How to use
-### embedding
+### Embedding
 - Generate input for Helix encoder. 
   -  `python mol_featurizer_for_TM.py`  
 
-### model training
+### Model training
 - Trains Helix encoder model.
   - `pytohn helix_encoder_main.py`    
 
-### predict
+### Predict
 - A trained model, Helix encoder (TM + ECL2), exists in this repository (`/output/model/helixEncoder_TM_ECL2`). If you want to use this model to predict your own data, use the following.
 
 1. Place the data you want to predict in /data/.
