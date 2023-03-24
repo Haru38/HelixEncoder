@@ -2,7 +2,7 @@
 
 
 <div align="center">
-    <img src="[画像のPATH](https://user-images.githubusercontent.com/67744833/226157282-646a1e6e-77b9-462c-b2c1-2bcae33ed700.png)" alt="figure">
+    <img src="https://user-images.githubusercontent.com/67744833/226157282-646a1e6e-77b9-462c-b2c1-2bcae33ed700.png" alt="figure">
 </div>
 <!-- {: align="center"}
 ![fotAbstract (1)]() -->
