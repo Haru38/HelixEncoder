@@ -29,6 +29,7 @@
 O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVLL WFLREGLLFTALAASTFSLLF VYGFIGLCWLLAALLGMLPLL FCLVIFAGVLATIMGLYGAIF VLMILLAFLVCWGPLFGLLLA MDWILALAVLNSAVNPIIYSF 1
 ```
 - `/dataset`
+  - Generated when cloning the transformerCPI repository 
   - Directory where data embedded by mol_featurizer is stored
   
 ## How to use
