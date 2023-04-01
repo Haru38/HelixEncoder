@@ -6,7 +6,7 @@
 
 @Time:Modified on 2023/3/
 @File modifier: Haruki Yamane
-@Filename: mol_featurizer_forHelix.py
+@Filename: mol_featurizer_for_TM.py
 """
 import numpy as np
 from rdkit import Chem
