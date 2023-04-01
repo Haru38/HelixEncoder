@@ -39,7 +39,7 @@ O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVL
 
 ### Model training
 - Trains Helix encoder model.
-  - `pytohn helix_encoder_main.py`    
+  - `python helix_encoder_main.py`    
 
 ### Predict
 - A trained model, Helix encoder (TM + ECL2), exists in this repository (`/output/model/helixEncoder_TM_ECL2`). If you want to use this model to predict your own data, use the following.
