@@ -5,6 +5,21 @@
     <img src="https://user-images.githubusercontent.com/67744833/226157282-646a1e6e-77b9-462c-b2c1-2bcae33ed700.png" alt="figure">
 </div>
 
+## Citation
+```
+@ARTICLE{10.3389/fbinf.2023.1193025,
+    AUTHOR={Yamane, Haruki and Ishida, Takashi},   
+    TITLE={Helix encoder: a compound-protein interaction prediction model specifically designed for class A GPCRs},      
+    JOURNAL={Frontiers in Bioinformatics},      
+    VOLUME={3},           
+    YEAR={2023},      
+    URL={https://www.frontiersin.org/articles/10.3389/fbinf.2023.1193025},       
+    DOI={10.3389/fbinf.2023.1193025},      
+    ISSN={2673-7647},
+    ABSTRACT={Class A G protein-coupled receptors (GPCRs) represent the largest class of GPCRs. They are essential targets of drug discovery and thus various computational approaches have been applied to predict their ligands. However, there are a large number of orphan receptors in class A GPCRs and it is difficult to use a general protein-specific supervised prediction scheme. Therefore, the compound-protein interaction (CPI) prediction approach has been considered one of the most suitable for class A GPCRs. However, the accuracy of CPI prediction is still insufficient. The current CPI prediction model generally employs the whole protein sequence as the input because it is difficult to identify the important regions in general proteins. In contrast, it is well-known that only a few transmembrane helices of class A GPCRs play a critical role in ligand binding. Therefore, using such domain knowledge, the CPI prediction performance could be improved by developing an encoding method that is specifically designed for this family. In this study, we developed a protein sequence encoder called the Helix encoder, which takes only a protein sequence of transmembrane regions of class A GPCRs as input. The performance evaluation showed that the proposed model achieved a higher prediction accuracy compared to a prediction model using the entire protein sequence. Additionally, our analysis indicated that several extracellular loops are also important for the prediction as mentioned in several biological researches.}
+}
+```
+
 
 ## Dependencies
 - Python = 3.7.10
