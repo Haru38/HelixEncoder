@@ -5,21 +5,6 @@
     <img src="https://user-images.githubusercontent.com/67744833/226157282-646a1e6e-77b9-462c-b2c1-2bcae33ed700.png" alt="figure">
 </div>
 
-## Citation
-If you use this code, please cite the following paper:
-```bibtex
-@ARTICLE{10.3389/fbinf.2023.1193025,
-    AUTHOR={Yamane, Haruki and Ishida, Takashi},   
-    TITLE={Helix encoder: a compound-protein interaction prediction model specifically designed for class A GPCRs},      
-    JOURNAL={Frontiers in Bioinformatics},      
-    VOLUME={3},           
-    YEAR={2023},      
-    URL={https://www.frontiersin.org/articles/10.3389/fbinf.2023.1193025},       
-    DOI={10.3389/fbinf.2023.1193025},      
-    ISSN={2673-7647},
-```
-
-
 ## Dependencies
 - Python = 3.7.10
 - pytorch >= 1.2.0
@@ -63,3 +48,16 @@ O=C(OCn1ncc(Br)c(Br)c1=O)c1c(F)cccc1F GLSVAASCLVVLENLLVLAAI LVNITLSDLLTGAAYLANVL
 3. For prediction, run `python predict.py`
 
 
+## Citation
+If you use this code, please cite the following paper:
+```bibtex
+@ARTICLE{10.3389/fbinf.2023.1193025,
+    AUTHOR={Yamane, Haruki and Ishida, Takashi},   
+    TITLE={Helix encoder: a compound-protein interaction prediction model specifically designed for class A GPCRs},      
+    JOURNAL={Frontiers in Bioinformatics},      
+    VOLUME={3},           
+    YEAR={2023},      
+    URL={https://www.frontiersin.org/articles/10.3389/fbinf.2023.1193025},       
+    DOI={10.3389/fbinf.2023.1193025},      
+    ISSN={2673-7647},
+```
