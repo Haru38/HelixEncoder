@@ -6,7 +6,8 @@
 </div>
 
 ## Citation
-```
+If you use this code, please cite the following paper:
+```bibtex
 @ARTICLE{10.3389/fbinf.2023.1193025,
     AUTHOR={Yamane, Haruki and Ishida, Takashi},   
     TITLE={Helix encoder: a compound-protein interaction prediction model specifically designed for class A GPCRs},      
