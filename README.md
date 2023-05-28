@@ -1,4 +1,4 @@
-# Helix encoder: A compound-protein interaction prediction model specifically designed for class A GPCRs
+# Helix encoder: a compound-protein interaction prediction model specifically designed for class A GPCRs
 
 
 <div align="center">
